@@ -4,8 +4,16 @@ A Markov Model DNA sequence generator to generate pseudo-replicate sequences bas
 
 ## Installation
 
+It can be installed using pip:
+
 ``` bash
 pip3 install .
+```
+
+Or using conda:
+
+``` bash
+conda install erikblazfer::markov_dna
 ```
 
 ## User guide

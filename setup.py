@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='Markov_DNA',
-    version='0.1',
+    version='1.0.0',
     packages=["Markov_DNA"],
     package_dir={'':'src'},
     description='A Markov Model DNA sequence generator to generate pseudo-replicate sequences based on an input sequence.',
