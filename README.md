@@ -34,6 +34,15 @@ Where:
 
 Generate sequences:
 
+Can be done in two different ways, using a generator in an iterative way:
+
+```python
+    for new_seq in mcm.generator(l, N=N):
+        print(new_seq)
+```
+
+Or by calling a function that generates a list of sequences:
+
 ```python
     seqs = mcm.generate(l, N=N)
 ```
@@ -42,13 +51,17 @@ Where:
   - l is the length of the sequence to be generated.
   - N is the number of sequences to be generated.
 
+The advantage of the first method is that you do not need to keep all the sequences in memory, while the second one allows you to obtain a list of sequences directly.
+
 ## Example
 
-The example.py file is an example that generates 10 sequences from a base sequence. It can be executed as follows:
+There are two examples located in the examples folder. The first one uses the function that returns the list of sequences and the second one uses the iterative form of the generator generator.
 
 ```bash
-    python3 example.py
+    python3 examples/exampleX.py
 ```
+
+Where X can be 1 or 2 depending on the genereting method.
 
 ## Authors
 

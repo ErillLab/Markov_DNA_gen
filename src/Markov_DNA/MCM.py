@@ -39,6 +39,7 @@ class MCM:
         Args:
             seq (string): DNA sequence to train the model.
         """
+        seq = seq.upper()
         if self.mode == self.CIRCULAR: 
             # Duplicates the sequence in order to avoid states without transitions
             seq += seq
@@ -129,6 +130,24 @@ class MCM:
                 state = seq[-self.n:]
             res.append(seq)
         return res
+    
+    def generator(self, n, N=1):
+        """
+        Generator for sampling new sequences of nucleotides using the trained model.
+
+        Args:
+            n (int): Length of the sequence to be generated.
+
+            N (int): Number of sequences to be generated.
+        """
+        for _ in range(N):
+            seq = self.initial_state()
+            state = seq
+            for _ in range(n):
+                nuc = self.sample(state)
+                seq += nuc
+                state = seq[-self.n:]
+            yield seq
 
     def initial_state(self):
         """
