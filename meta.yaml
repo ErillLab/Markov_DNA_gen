@@ -14,8 +14,10 @@ requirements:
   host:
     - python
     - setuptools
+    - numpy
   run:
     - python
+    - numpy
 
 about:
   license: GNU GENERAL PUBLIC LICENSE

@@ -19,6 +19,13 @@ class MCM:
             mode (int): Can be 0, 1(CIRCULAR), 2(AUXILIAR), 3(RANDOM). 
                 This mode is use in the generation of sequences, in case 
                 of arriving to some state without transitions.
+
+                - CIRCULAR: Duplicates the training sequence.
+                - AUXILIAR: An auxiliar Markov model is trained, with an 
+                  order in which there are no any states without transitions. 
+                  In case of arriving to some state withput transitions, this 
+                  auxiliar model is used to generate the next transition.
+                - RANDOM: The transition probabilities are generated randomly.
         """
         # Markov model order
         self.n = n
@@ -154,9 +161,8 @@ class MCM:
         Computes the initial k-mer of the sequence sampling from the list
         of appeared k-mers in the training sequence.
         """
-        state = random.randint(0, len(self.transition)-1)
         keys = list(self.transition.keys())
-        return keys[state]
+        return random.choice(keys)
     
     def auxiliar_transition(self, state):
         """
@@ -164,10 +170,13 @@ class MCM:
         method by the self.mode parameter.
 
         Args:
-            state (string): The current state to In case of using the auxiliar Markov model.
+            state (string): The current state to in case of using the 
+            auxiliar Markov model.
         """
         if self.mode == self.AUXILIAR:
-            # Uses the transition probabilities of lower order Markov model
+            # Uses the transition probabilities of the auxiliar model trained.
+            # The state used for the auxiliar model has less nucleotides, since
+            # the trained model has a lower order -> state[-self.aux_k:]
             probs = self.aux_transition[state[-self.aux_k:]]
         elif self.mode == self.RANDOM:
             # Generates auxiliar transition probabilities randomly

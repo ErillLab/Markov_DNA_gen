@@ -2,6 +2,10 @@
 
 A Markov Model DNA sequence generator to generate pseudo-replicate sequences based on an input sequence.
 
+## Requirements
+
+- NumPy
+
 ## Installation
 
 It can be installed using pip:
