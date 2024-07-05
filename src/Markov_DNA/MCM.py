@@ -9,7 +9,7 @@ class MCM:
     AUXILIAR = 2
     RANDOM = 3
 
-    def __init__(self, n=-1, mode=0):
+    def __init__(self, n=1, mode=0):
         """
         Markov Chain Model constructor.
 
@@ -31,13 +31,18 @@ class MCM:
         self.n = n
 
         # Transition matrix
+        # key: Represents the state, a sequence of n nucleotides
+        # value: Transition probabilities for the state in form of dict.
+        #         Each entry represents the probability to make a transition
+        #         to a nucleotide, being the nucleotide the key
         self.transition = {}
 
         # Auxiliar mode
         self.mode = mode
         if self.mode == self.AUXILIAR:
             # Transition matrix of auxiliar Markov model
-            self.aux_transition = [{} for _ in range(n-1)]
+            # Similar structure as self.transition
+            self.aux_transition = [{} for _ in range(n)]
 
     def train(self, seq):
         """
@@ -65,9 +70,12 @@ class MCM:
             self.transition[kmer]["tot"] += 1
             if self.mode == self.AUXILIAR: 
                 ## Computes all posible models
-                for k in range(0, self.n-1):
-                    aux_kmer = kmer[-k-1:]
-                    if not kmer in self.aux_transition[k]:
+                for k in range(0, self.n):
+                    if k == 0:
+                        aux_kmer = ""
+                    else:
+                        aux_kmer = kmer[-k:]
+                    if not aux_kmer in self.aux_transition[k]:
                         self.aux_transition[k][aux_kmer] = {}
                         self.aux_transition[k][aux_kmer]["A"] = 0
                         self.aux_transition[k][aux_kmer]["C"] = 0
@@ -84,18 +92,16 @@ class MCM:
 
         if self.mode == self.AUXILIAR:
             ## Computes the transition matrix for the auxiliar Markov model
-            for k in range(self.n-1-1, -1, -1):
+            for k in range(self.n-1, -1, -1):
                 ## Searches for the model with the highest order that has no states without transitions
-                print(len(self.aux_transition[k]), 4**(k+1), k+1)
-                if len(self.aux_transition[k]) == 4**(k+1):
-                    # print("Auxiliar transition matrix of order", k+1)
+                if len(self.aux_transition[k]) == 4**(k):
                     self.aux_transition = self.aux_transition[k]
                     for key in self.aux_transition.keys():
                         self.aux_transition[key]["A"] /= self.aux_transition[key]["tot"]
                         self.aux_transition[key]["C"] /= self.aux_transition[key]["tot"]
                         self.aux_transition[key]["G"] /= self.aux_transition[key]["tot"]
                         self.aux_transition[key]["T"] /= self.aux_transition[key]["tot"]
-                    self.aux_k = k+1
+                    self.aux_k = k
                     break
 
     def sample(self, state):
