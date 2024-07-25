@@ -103,6 +103,16 @@ class MCM:
                         self.aux_transition[key]["T"] /= self.aux_transition[key]["tot"]
                     self.aux_k = k
                     break
+        
+        #  Random mode
+        if self.mode ==  self.RANDOM:
+            # Generates random transition probabilities based in the nucleotide frequencies
+            a = seq.count("A")
+            c = seq.count("C")
+            g = seq.count("G")
+            t = seq.count("T")
+            tot = len(seq)
+            self.random_transition = {"A": a/tot, "C": c/tot, "G": g/tot, "T": t/tot}
 
     def sample(self, state):
         """
@@ -183,16 +193,11 @@ class MCM:
             # Uses the transition probabilities of the auxiliar model trained.
             # The state used for the auxiliar model has less nucleotides, since
             # the trained model has a lower order -> state[-self.aux_k:]
-            probs = self.aux_transition[state[-self.aux_k:]]
+            return self.aux_transition[state[-self.aux_k:]]
         elif self.mode == self.RANDOM:
-            # Generates auxiliar transition probabilities randomly
-            a = random.randint()
-            c = random.randint()
-            g = random.randint()
-            t = random.randint()
-            tot = a + c + g + t
-            probs = {"A:": a/tot, "C": c/tot, "G": g/tot, "T": t/tot}
+            # Uses the nucleotide frequencies of the training sequence as 
+            # transition probabilities
+            return self.random_transition
         else:
             print("ERROR: Undefined transitions. (%s)"%state)
             exit(-1)
-        return probs

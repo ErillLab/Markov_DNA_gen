@@ -67,13 +67,18 @@ The advantage of the first method is that you do not need to keep all the sequen
 
 ## Example
 
-There are two examples located in the examples folder. The first one uses the function that returns the list of sequences and the second one uses the iterative form of the generator generator.
+There are some examples located in the examples folder. To execute them, the following command can be used:
 
 ```bash
     python3 examples/exampleX.py
 ```
 
-Where X can be 1 or 2 depending on the genereting method.
+Where X can be [1..4] depending on the genereting method.
+
+- Example 1: Shows how to use the function that returns the list of sequences.
+- Example 2: Shows how to use the iterative form of the generator generator.
+- Example 3: An example using the ```AUXILIAR``` mode for empty transitions.
+- Example 4: An example using the ```RANDOM``` mode for empty transitions.
 
 ## Authors
 
