@@ -7,5 +7,5 @@ if __name__ == "__main__":
 
     mcm.train(seq)
 
-    for new_seq in mcm.generator(len(seq), 10):
+    for new_seq in mcm.generator(N=10):
         print(new_seq)
