@@ -1,0 +1,24 @@
+package:
+  name: markov_dna
+  version: "1.0.0"
+
+source:
+  path: ./
+
+build:
+  noarch: python
+  script: python setup.py install
+  # script: python setup_conda.py install
+
+requirements:
+  host:
+    - python
+    - setuptools
+    - numpy
+  run:
+    - python
+    - numpy
+
+about:
+  license: GNU GENERAL PUBLIC LICENSE
+  summary: "A Markov Model DNA sequence generator to generate pseudo-replicate sequences based on an input sequence."
