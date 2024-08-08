@@ -131,15 +131,18 @@ class MCM:
         Generator for sampling new sequences of nucleotides using the trained model.
 
         Args:
-            size (int): Length of the sequence to be generated.
+            size (int):
+                Length of each generate sequence. If None, the length of the original
+                sequence used to train the model will be used.
 
-            N (int): Number of sequences to be generated.
+            N (int):
+                Number of sequences to be generated. If None, the generator is infinite.
         """
         if size == None:
             size = self.size
 
         if N == None:
-            while 1:
+            while True:
                 seq = self.generate(size=size)[0]
                 yield seq
         else:
