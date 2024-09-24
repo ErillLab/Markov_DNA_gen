@@ -17,7 +17,7 @@ pip3 install .
 Or using conda:
 
 ``` bash
-conda install erikblazfer::markov_dna
+conda install erilllab::markov_dna
 ```
 
 ## User guide
