@@ -1,8 +1,6 @@
 import random
 import numpy as np
 
-# XXX "check_nucleotides" branch 
-
 class MCM:
 
     def __init__(self, k=1):
