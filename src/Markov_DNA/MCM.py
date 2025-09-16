@@ -1,6 +1,8 @@
 import random
 import numpy as np
 
+# XXX "check_nucleotides" branch 
+
 class MCM:
 
     def __init__(self, k=1):
@@ -114,7 +116,7 @@ class MCM:
         for _ in range(N):
             if self.k == 0:
                 probs = self.transition[""]
-                seq = np.random.choice(["A","C","G","T"], p=[probs["A"], probs["C"], probs["G"], probs["T"]], size=n)
+                seq = np.random.choice(["A","C","G","T"], p=[probs["A"], probs["C"], probs["G"], probs["T"]], size=size)
                 seq = "".join(seq)
             else:
                 seq = self.initial_state()
