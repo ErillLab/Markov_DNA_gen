@@ -35,6 +35,9 @@ class MCM:
         Args:
             seq (string): DNA sequence to train the model.
         """
+        # Check that characters in `seq` are valid
+        self.check_nucleotides(seq)
+        # Start training
         self.size = len(seq)
         seq = seq.upper()
         self.seq = seq
@@ -114,7 +117,7 @@ class MCM:
         for _ in range(N):
             if self.k == 0:
                 probs = self.transition[""]
-                seq = np.random.choice(["A","C","G","T"], p=[probs["A"], probs["C"], probs["G"], probs["T"]], size=n)
+                seq = np.random.choice(["A","C","G","T"], p=[probs["A"], probs["C"], probs["G"], probs["T"]], size=size)
                 seq = "".join(seq)
             else:
                 seq = self.initial_state()
@@ -157,3 +160,20 @@ class MCM:
         """
         keys = list(self.transition.keys())
         return random.choice(keys)
+    
+    def check_nucleotides(self, seq):
+        """
+        Checks that the input sequence for `train` is only composed of A/C/G/T.
+        """
+        unknown_chars = set(seq.upper()).difference({'A', 'C', 'G', 'T'})
+        if len(unknown_chars) > 0:
+            raise ValueError('Unknown character(s): {}. '.format(unknown_chars) +
+                             'Please make sure the sequence only ' +
+                             'contains the characters ACGT (both ' +
+                             'lowercase and uppercase are valid) that ' +
+                             'represent the four nucleotides found in DNA.')
+
+
+
+
+
