@@ -29,7 +29,7 @@ class MCM:
         Trains the model using a DNA sequence, computing the transition matrix of the model.
 
         An auxiliar Markov model is trained, with an order in which there is no state without 
-        transitions. In case of arriving to some state withput transitions, this auxiliar model
+        transitions. In case of arriving to some state without transitions, this auxiliar model
         is used to generate the next transition.
 
         Args:
@@ -39,10 +39,12 @@ class MCM:
         self.check_nucleotides(seq)
         # Start training
         self.size = len(seq)
+        if self.k > self.size:
+            raise ValueError("The order of the Markov model (k) cannot be greater than the length of the sequence.")
         seq = seq.upper()
         self.seq = seq
         self.transition = {}
-        for i in range(0, len(seq)-self.k):
+        for i in range(0, len(seq)-self.k+1):
             kmer = seq[i: i+self.k]
             if not kmer in self.transition:
                 self.transition[kmer] = {}
@@ -51,10 +53,11 @@ class MCM:
                 self.transition[kmer]["G"] = 0
                 self.transition[kmer]["T"] = 0
                 self.transition[kmer]["tot"] = 0
-            self.transition[kmer][seq[i+self.k]] += 1
-            self.transition[kmer]["tot"] += 1
+            if (i+self.k) < len(seq):
+                self.transition[kmer][seq[i+self.k]] += 1
+                self.transition[kmer]["tot"] += 1
 
-            ## Computes all posible models
+            ## Computes all possible models
             for k in range(0, self.k):
                 if k == 0:
                     aux_kmer = ""
@@ -67,26 +70,29 @@ class MCM:
                     self.aux_transition[k][aux_kmer]["G"] = 0
                     self.aux_transition[k][aux_kmer]["T"] = 0
                     self.aux_transition[k][aux_kmer]["tot"] = 0
-                self.aux_transition[k][aux_kmer][seq[i+self.k]] += 1
+                self.aux_transition[k][aux_kmer][seq[i+k]] += 1
                 self.aux_transition[k][aux_kmer]["tot"] += 1
 
         for key in self.transition.keys():
-            self.transition[key]["A"] /= self.transition[key]["tot"]
-            self.transition[key]["C"] /= self.transition[key]["tot"]
-            self.transition[key]["G"] /= self.transition[key]["tot"]
-            self.transition[key]["T"] /= self.transition[key]["tot"]
+            if self.transition[key]["tot"] != 0:
+                self.transition[key]["A"] /= self.transition[key]["tot"]
+                self.transition[key]["C"] /= self.transition[key]["tot"]
+                self.transition[key]["G"] /= self.transition[key]["tot"]
+                self.transition[key]["T"] /= self.transition[key]["tot"]
 
         ## Searches for the model with the highest order that has no states without transitions
         for k in range(self.k-1, -1, -1):
             if len(self.aux_transition[k]) == 4**(k):
                 self.aux_transition = self.aux_transition[k]
                 for key in self.aux_transition.keys():
-                    self.aux_transition[key]["A"] /= self.aux_transition[key]["tot"]
-                    self.aux_transition[key]["C"] /= self.aux_transition[key]["tot"]
-                    self.aux_transition[key]["G"] /= self.aux_transition[key]["tot"]
-                    self.aux_transition[key]["T"] /= self.aux_transition[key]["tot"]
+                    if self.aux_transition[key]["tot"] != 0:
+                        self.aux_transition[key]["A"] /= self.aux_transition[key]["tot"]
+                        self.aux_transition[key]["C"] /= self.aux_transition[key]["tot"]
+                        self.aux_transition[key]["G"] /= self.aux_transition[key]["tot"]
+                        self.aux_transition[key]["T"] /= self.aux_transition[key]["tot"]
                 self.aux_k = k
                 break
+
 
     def sample(self, state):
         """
@@ -95,10 +101,10 @@ class MCM:
         Args:
             state: Dictionary of probabilities for nucleotides.
         """
-        if state in self.transition.keys():
+        if (state in self.transition.keys()) and (self.transition[state]["tot"] != 0):
             probs = self.transition[state]
         else:
-            probs = self.aux_transition[state[-self.aux_k:]]
+            probs = self.aux_transition[state[-self.aux_k:]] if self.aux_k > 0 else self.aux_transition[""]
         return np.random.choice(["A","C","G","T"], p=[probs["A"], probs["C"], probs["G"], probs["T"]])
 
     def generate(self, size=None, N=1):
@@ -172,8 +178,3 @@ class MCM:
                              'contains the characters ACGT (both ' +
                              'lowercase and uppercase are valid) that ' +
                              'represent the four nucleotides found in DNA.')
-
-
-
-
-
